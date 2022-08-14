@@ -8,7 +8,7 @@ The clcc library provides Common Lisp bindings to generate C++ code.
 - A Common Lisp distribution; I tested the following distributions:
   * [SBCL](https://www.sbcl.org/)
   * [ABCL](https://abcl.org/)
-- lang-util
+- [lang-util](https://github.com/joergen7/lang-util/)
 - [Alexandria](https://alexandria.common-lisp.dev/)
 - [FiveAM](https://fiveam.common-lisp.dev/) and its dependencies
 
