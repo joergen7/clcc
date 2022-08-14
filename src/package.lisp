@@ -16,7 +16,7 @@
 ;; limitations under the License.
 
 (defpackage :clcc
-  (:use :cl)
+  (:use :cl :lang-util)
   (:nicknames :cc)
   (:export
 
