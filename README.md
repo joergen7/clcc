@@ -1,3 +1,5 @@
+[![Build Status](https://app.travis-ci.com/joergen7/clcc.svg?branch=master)](https://app.travis-ci.com/joergen7/clcc)
+
 # clcc
 C++ language model and compiler in Common Lisp
 
