@@ -9,10 +9,10 @@ env:
 install:
   # Install cl-travis
   - curl https://raw.githubusercontent.com/luismbo/cl-travis/master/install.sh | bash
+  - git clone https://github.com/joergen7/lang-util.git -C ~/common-lisp
 
 script:
   - cl -l fiveam
-       -l lang-util
        -e '(setf fiveam:*debug-on-error* t
                  fiveam:*debug-on-failure* t)'
        -e '(setf *debugger-hook*
