@@ -20,6 +20,10 @@
   (:nicknames :cc)
   (:export
 
+   ;; equality
+   #:c-operator==
+   #:c-operator==-p
+
    ;; accessors
    #:alt
    #:arg

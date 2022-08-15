@@ -10,11 +10,12 @@ The clcc library provides Common Lisp bindings to generate C++ code.
 - A Common Lisp distribution; I tested the following distributions:
   * [SBCL](https://www.sbcl.org/)
   * [ABCL](https://abcl.org/)
+- [ASDF](https://asdf.common-lisp.dev/) comes packaged with the aforementioned CL distributions
 - [lang-util](https://github.com/joergen7/lang-util/)
 - [Alexandria](https://alexandria.common-lisp.dev/)
 - [FiveAM](https://fiveam.common-lisp.dev/) and its dependencies
 
-In the following, we give advice on how to set up your `common-lisp` directory. In order to create and switch to it enter
+ASDF looks for system definitions in the `~/common-lisp/` folder. Create it and change to it.
 
 ``` bash
 mkdir -p ~/common-lisp
@@ -30,7 +31,7 @@ git clone http://common-lisp.net/projects/alexandria/alexandria.git
 
 ### Installing FiveAM
 
-To run the test suite you must have the [FiveAM](https://fiveam.common-lisp.dev/) regression testing framework and its dependencies available. In the `common-lisp` folder relative to your home directory run
+To run the test suite you must have the [FiveAM](https://fiveam.common-lisp.dev/) regression testing framework and its dependencies available. We use ASDF to manage systems and their dependencies. In the `~/common-lisp` folder run
 
 ``` bash
 git clone http://common-lisp.net/project/trivial-backtrace/trivial-backtrace.git
@@ -40,14 +41,7 @@ git clone https://github.com/lispci/fiveam.git
 
 ### Adding clcc and lang-util
 
-Checkout clcc and lang-util from GitHub
-
-``` bash
-git clone https://github.com/joergen7/lang-util.git
-git clone https://github.com/joergen7/clcc.git
-```
-
-You can load clcc using [ASDF](https://asdf.common-lisp.dev/). ASDF looks for system definitions in the `common-lisp` folder relative to the home directory. Thus, the first step is to create a link here to the `lang-util` folder. Assuming your clone of clcc and lang-util reside in `~/git/clcc` and `~/git/lang-util` this can be accomplished by creating two symbolic links.
+The clcc and lang-util libraries also need to be visible to ASDF. Assuming your clone of the lang-util repository resides in `~/git/lang-util/` and clcc resides in `~/git/clcc/` this can be accomplished by creating a symbolic link.
 
 ``` bash
 ln -s ~/git/lang-util ~/common-lisp/lang-util
