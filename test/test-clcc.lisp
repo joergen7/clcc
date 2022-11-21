@@ -19,9 +19,6 @@
 (in-suite clcc-suite)
 
 (test cc-predicate
-  (is-true  (c-tp-p          (c-n-x "blub")))
-  (is-true  (c-argument-p    (c-argument "x" (c-n-x "int"))))
-  (is-true  (c-t-function-p  (c-t-function '() (c-t-string))))
   (is-true  (c-ex-p          (c-n-x "x")))
   (is-true  (c-st-p          (c-s-do (c-n-x "x"))))
   (is-true  (c-catch-block-p (c-catch-block "a" (c-n-x "b"))))
@@ -54,18 +51,14 @@
 
 (test cc-construct-access-compile
 
-  (let ((t1 (c-t-const (c-n-x "blub"))))
-    (is (equal "blub" (name (param-type t1))))
-    (is (equal "blub const" (c-->string t1))))
-
   (let ((t1 (c-n-x "blub")))
     (is (equal "blub" (name t1)))
     (is (equal "blub" (c-->string t1))))
 
-  (let ((t1 (c-t-vector (c-n-x "blub"))))
-    (is (equal "blub" (name (car (arg-list t1)))))
-    (is (c-name-eq "std::vector" (name t1)))
-    (is (c-name-eq "std::vector<blub>" t1)))
+  (let ((t1 (c-t-const (c-n-x "blub"))))
+    (is (equal "blub" (name (param-type t1))))
+    (is (equal "blub const" (c-->string t1))))
+
 
   (let ((t1 (c-t-pair (c-n-x "a") (c-n-x "b"))))
     (is (c-name-eq "std::pair" (name t1)))
@@ -130,226 +123,6 @@
     (is (equal "a" (name (car (arg-list t1)))))
     (is (equal "std::unique_ptr<a>" (c-->string t1))))
 
-  (let ((e (c-e-++ (c-n-x "x"))))
-    (is (equal "x" (name (expr e))))
-    (is (equal "++x" (c-->string e))))
-
-  (let ((e (c-e--- (c-n-x "x"))))
-    (is (equal "x" (name (expr e))))
-    (is (equal "--x" (c-->string e))))
-
-  (let ((e (c-e-! (c-e-bool nil))))
-    (is-false (value (expr e)))
-    (is (equal "!( false )" (c-->string e))))
-  
-  (let ((e (c-e-string "blub")))
-    (is (equal "blub" (value e)))
-    (is (equal "\"blub\"" (c-->string e))))
-
-  (let ((e (c-e-int 5)))
-    (is (equal 5 (value e)))
-    (is (equal "5" (c-->string e))))
-
-  (let ((e (c-e-bool t)))
-    (is-true (value e))
-    (is (equal "true" (c-->string e))))
-
-  (let ((e (c-e-bool nil)))
-    (is-false (value e))
-    (is (equal "false" (c-->string e))))
-
-  (let ((e (c-e-char #\b)))
-    (is (equal #\b (value e)))
-    (is (equal "'b'" (c-->string e))))
-
-  (let ((e (c-e-char #\newline)))
-    (is (equal #\newline (value e)))
-    (is (equal (format nil "'\\n'") (c-->string e))))
-
-  (let ((e (c-e-- (c-e-int 3) (c-e-int 4))))
-    (is (equal 3 (value (lhs e))))
-    (is (equal 4 (value (rhs e))))
-    (is (equal "( 3-4 )" (c-->string e))))
-  
-  (let ((e (c-e-/ (c-e-int 3) (c-e-int 4))))
-    (is (equal 3 (value (lhs e))))
-    (is (equal 4 (value (rhs e))))
-    (is (equal "( 3/4 )" (c-->string e))))
-
-  (let ((e (c-e-== (c-e-int 3) (c-e-int 4))))
-    (is (equal 3 (value (lhs e))))
-    (is (equal 4 (value (rhs e))))
-    (is (equal "3 == 4" (c-->string e))))
-
-  (let ((e (c-e-!= (c-e-int 3) (c-e-int 4))))
-    (is (equal 3 (value (lhs e))))
-    (is (equal 4 (value (rhs e))))
-    (is (equal "3 != 4" (c-->string e))))
-
-  (let ((e (c-e->= (c-e-int 3) (c-e-int 4))))
-    (is (equal 3 (value (lhs e))))
-    (is (equal 4 (value (rhs e))))
-    (is (equal "3 >= 4" (c-->string e))))
-
-  (let ((e (c-e-< (c-e-int 3) (c-e-int 4))))
-    (is (equal 3 (value (lhs e))))
-    (is (equal 4 (value (rhs e))))
-    (is (equal "3 < 4" (c-->string e))))
-
-  (let ((e (c-e-! (c-e-bool t))))
-    (is-true (value (expr e)))
-    (is (equal "!( true )" (c-->string e))))
-
-  (let ((e (c-e-pair (c-e-int 3) (c-e-int 4))))
-    (is (equal 3 (value (lhs e))))
-    (is (equal 4 (value (rhs e))))
-    (is (equal "{ 3, 4 }" (c-->string e))))
-
-  (let ((e (c-e-pointer (c-e-int 3))))
-    (is (equal 3 (value (expr e))))
-    (is (equal "&3" (c-->string e))))
-
-  (let ((e (c-e-map)))
-    (is (equal "{}" (c-->string e))))
-
-  (let ((e (c-e-plain-cast (c-n-x "a") (c-n-x "x"))))
-    (is (equal "a" (name (param-type e))))
-    (is (equal "x" (name (expr e))))
-    (is (equal "(a)( x )" (c-->string e))))
-
-  (let ((e (c-e-static-cast (c-n-x "a") (c-n-x "x"))))
-    (is (equal "a" (name (param-type e))))
-    (is (equal "x" (name (expr e))))
-    (is (equal "static_cast<a>( x )" (c-->string e))))
-
-  (let ((e (c-e-dynamic-cast (c-n-x "a") (c-n-x "x"))))
-    (is (equal "a" (name (param-type e))))
-    (is (equal "x" (name (expr e))))
-    (is (equal "dynamic_cast<a>( x )" (c-->string e))))
-
-  (let ((e (c-e-call (c-n-x "f") (c-n-x "x"))))
-    (is (equal "f" (name (expr e))))
-    (is (equal "x" (name (car (arg-list e)))))
-    (is (equal "f( x )" (c-->string e))))
-  
-  (signals
-      (error "c-e-call failed to signal error on bad argument")
-    (c-e-call (c-n-x "f") 5))
-
-  (let ((e (c-e-call (c-n-x "f"))))
-    (is (equal "f" (name (expr e))))
-    (is-false (arg-list e))
-    (is (equal "f()" (c-->string e))))
-
-  (let ((e (c-e-call (c-n-x "f") (list (c-n-x "x")))))
-    (is (equal "f" (name (expr e))))
-    (is (equal "x" (name (car (arg-list e)))))
-    (is (equal "f( x )" (c-->string e))))
-
-  (let ((e (c-e-call (c-n-x "f") (list (c-n-x "x") (c-n-x "y")))))
-    (is (equal "f" (name (expr e))))
-    (is (equal "x" (name (car (arg-list e)))))
-    (is (equal "y" (name (cadr (arg-list e)))))
-    (is (equal "f( x, y )" (c-->string e))))
-
-  (let ((e (c-e-? (c-n-x "x") (c-n-x "y") (c-n-x "z"))))
-    (is (equal "x" (name (cnd e))))
-    (is (equal "y" (name (imp e))))
-    (is (equal "z" (name (alt e))))
-    (is (equal "( x ? y : z )" (c-->string e))))
-
-  (signals
-      (error "c-e-optional failed to signal error on bad operand")
-    (c-e-optional 5))
-
-  (let ((e (c-e-optional)))
-    (is-false (expr e))
-    (is (equal "std::experimental::nullopt" (c-->string e))))
-
-  (let ((e (c-e-optional (c-n-x "x"))))
-    (is (equal "x" (name (expr e))))
-    (is (equal "{ x }" (c-->string e))))
-
-  (let ((e (c-e-+)))
-    (is-false (arg-list e))
-    (is (equal "0" (c-->string e))))
-
-  (let ((e (c-e-+ (c-n-x "x"))))
-    (is (equal "x" (name (car (arg-list e)))))
-    (is (equal "x" (c-->string e))))
-
-  (let ((e (c-e-+ (c-n-x "x") (c-n-x "y"))))
-    (is (equal "x" (name (car (arg-list e)))))
-    (is (equal "y" (name (cadr (arg-list e)))))
-    (is (equal "( x+y )" (c-->string e))))
-
-  (signals
-      (error "c-e-+ failed to signal error on bad argument")
-    (c-e-+ 5 2))
-
-  (let ((e (c-e-*)))
-    (is-false (arg-list e))
-    (is (equal "1" (c-->string e))))
-
-  (let ((e (c-e-* (c-n-x "x"))))
-    (is (equal "x" (name (car (arg-list e)))))
-    (is (equal "x" (c-->string e))))
-
-  (let ((e (c-e-* (c-n-x "x") (c-n-x "y"))))
-    (is (equal "x" (name (car (arg-list e)))))
-    (is (equal "y" (name (cadr (arg-list e)))))
-    (is (equal "( x*y )" (c-->string e))))
-
-  (let ((e (c-e-* (c-n-x "x") (c-n-x "y") (c-n-x "z"))))
-    (is (equal "x" (name (car (arg-list e)))))
-    (is (equal "y" (name (cadr (arg-list e)))))
-    (is (equal "z" (name (caddr (arg-list e)))))
-    (is (equal "( x*y*z )" (c-->string e))))
-
-  (signals
-      (error "c-e-* failed to signal error on bad argument")
-    (c-e-* 5 2))
-
-  (let ((e (c-e-&&)))
-    (is-false (arg-list e))
-    (is (equal "true" (c-->string e))))
-
-  (let ((e (c-e-&& (c-n-x "x"))))
-    (is (equal "x" (name (car (arg-list e)))))
-    (is (equal "x" (c-->string e))))
-
-  (let ((e (c-e-&& (c-n-x "x") (c-n-x "y"))))
-    (is (equal "x" (name (car (arg-list e)))))
-    (is (equal "y" (name (cadr (arg-list e)))))
-    (is (equal "( x && y )" (c-->string e))))
-
-  (let ((e (c-e-&& (c-n-x "x") (c-n-x "y") (c-n-x "z"))))
-    (is (equal "x" (name (car (arg-list e)))))
-    (is (equal "y" (name (cadr (arg-list e)))))
-    (is (equal "z" (name (caddr (arg-list e)))))
-    (is (equal "( x && y && z )" (c-->string e))))
-
-  (signals
-      (error "c-e-&& failed to signal error on bad argument")
-    (c-e-&& "x" "y"))
-
-  (signals
-      (error "c-e-vector failed to signal error on bad argument")
-    (c-e-vector 5))
-
-  (let ((e (c-e-vector)))
-    (is-false (arg-list e))
-    (is (equal "{}" (c-->string e))))
-
-  (let ((e (c-e-vector (c-n-x "x"))))
-    (is (equal "x" (name (car (arg-list e)))))
-    (is (equal "{ x }" (c-->string e))))
-
-  (let ((e (c-e-vector (c-n-x "x") (c-n-x "y"))))
-    (is (equal "x" (name (car (arg-list e)))))
-    (is (equal "y" (name (cadr (arg-list e)))))
-    (is (equal "{ x, y }" (c-->string e))))
-
   (let ((e (c-n-x "x")))
     (is (equal "x" (name e)))
     (is (equal "x" (c-->string e)))
@@ -359,6 +132,11 @@
     (is (c-name-eq "x" (lhs e)))
     (is (c-name-eq "y" (rhs e)))
     (is (equal "x.y" (c-->string e))))
+
+  (let ((a (c-e-call (c-n-sub (c-n-x "std") (c-n-x "to_string")) (c-e-call (c-e-. (c-n-x "ds") (c-n-x "get_x")))))
+		(b (c-n-x "c_str")))
+	(is (equal "std::to_string( ds.get_x() ).c_str"
+			   (c-->string (c-e-. a b)))))
   
   (let ((e (c-e--> (c-n-x "x") (c-n-x "y"))))
     (is (c-name-eq "x" (lhs e)))
@@ -681,14 +459,6 @@
     (is (equal "y" (name (cadr (arg-list s)))))
     (is (equal "throw except { x, y };" (c-->string s))))
 
-  (let ((arg (c-argument "a" (c-t-void))))
-    (is (equal "void a" (c-->string arg))))
-
-  (let ((arg (c-argument-ellipses)))
-    (is (equal "..." (c-->string arg))))
-
-  (let ((arg (c-argument "f" (c-t-function (list (c-argument "x" (c-t-nat))) (c-t-void)))))
-    (is (equal "void (*f)( unsigned int x )" (c-->string arg))))
 
   (signals
       (error "c-field failed to signal error on bad protection")
@@ -1040,9 +810,6 @@
   (is (equal '("experimental/optional") (c-find-dep-single (c-t-optional (c-t-bool)))))
   (is (equal '("ctime" "experimental/optional") (c-find-dep-single (c-t-optional (c-t-time)))))
 
-  (is (equal '("ctime") (c-find-dep-single (c-t-ref (c-t-time)))))
-
-  (is (equal '("ctime") (c-find-dep-single (c-t-pointer (c-t-time)))))
 
   (is (equal '("map") (c-find-dep-single (c-t-map (c-t-bool) (c-t-bool)))))
   (is (equal '("map" "string") (c-find-dep-single (c-t-map (c-t-string) (c-t-bool)))))
@@ -1059,8 +826,6 @@
   (is (null (c-find-dep-single (c-t-char))))
 
   (is (null (c-find-dep-single (c-t-function '() (c-t-void)))))
-  (is (equal '("ctime") (c-find-dep-single (c-t-function '() (c-t-time)))))
-  (is (equal '("ctime") (c-find-dep-single (c-t-function (list (c-argument "n" (c-t-time))) (c-t-void)))))
 
   (is (equal '("memory") (c-find-dep-single (c-t-unique-ptr (c-t-bool)))))
   (is (equal '("ctime" "memory") (c-find-dep-single (c-t-unique-ptr (c-t-time)))))
@@ -1092,7 +857,6 @@
   (is (equal '("ctime") (c-find-dep-single (c-func (c-info "f") '() (c-t-time)))))
   (is (equal '("ctime") (c-find-dep-single (c-func (c-info "f") (list (c-argument "x" (c-t-time))) (c-t-void)))))
   (is (equal '("libxml/parser.h") (c-find-dep-single (c-n-x "xmlSAXHandler"))))
-  (is-false (c-find-dep-single (c-argument-ellipses)))
   (is (equal '("cstring") (c-find-dep-single (c-destructor (c-s-do (c-n-x "memset"))))))
   (is (equal '("cstring") (c-find-dep-single (c-constructor '() '() (c-s-do (c-n-x "memset"))))))
   (is (equal '("ctime") (c-find-dep-single (c-constructor (list (c-argument "x" (c-t-time))) '()))))

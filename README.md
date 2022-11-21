@@ -34,7 +34,7 @@ git clone http://common-lisp.net/projects/alexandria/alexandria.git
 To run the test suite you must have the [FiveAM](https://fiveam.common-lisp.dev/) regression testing framework and its dependencies available. We use ASDF to manage systems and their dependencies. In the `~/common-lisp` folder run
 
 ``` bash
-git clone http://common-lisp.net/project/trivial-backtrace/trivial-backtrace.git
+git clone https://gitlab.common-lisp.net/trivial-backtrace/trivial-backtrace.git/
 git clone https://github.com/didierverna/asdf-flv.git
 git clone https://github.com/lispci/fiveam.git
 ```
@@ -98,7 +98,9 @@ Assuming, that you are running [SBCL](https://www.sbcl.org/) you can get coverag
 ``` cl
 (require :asdf)
 (require :sb-cover)
-(asdf:test-system :clcc)
+(declaim (optimize sb-cover:store-coverage-data))
+
+(asdf:test-system :clcc :force t)
 (sb-cover:report "coverage/")
 ```
 

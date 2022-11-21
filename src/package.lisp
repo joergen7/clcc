@@ -67,6 +67,7 @@
    #:c-n-sub
    #:c-n-arg
    #:c-t-const
+   #:c-t-const-p
    #:c-t-const-ref
    #:c-t-const-pointer
    #:c-t-quote
@@ -97,6 +98,7 @@
    #:c-t-double
    #:c-ex
    #:c-ex-p
+   #:string-c-ex-p
    #:c-e-lval
    #:c-e-value
    #:c-e-expr
@@ -126,6 +128,7 @@
    #:c-e-pair
    #:c-e-pointer
    #:c-e-map
+   #:c-e-list
    #:c-e-plain-cast
    #:c-e-dynamic-cast
    #:c-e-static-cast
