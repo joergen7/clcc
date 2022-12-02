@@ -64,6 +64,7 @@
    #:c-argument-p
    #:c-const-ref-argument
    #:c-n-x
+   #:c-n-x-p
    #:c-n-sub
    #:c-n-arg
    #:c-t-const
@@ -96,6 +97,8 @@
    #:c-t-generic
    #:c-t-member
    #:c-t-double
+   #:c-e-cin
+   #:c-e-cout
    #:c-ex
    #:c-ex-p
    #:string-c-ex-p
@@ -212,6 +215,9 @@
    #:c-src->hash
    #:c-find-dep
    #:c-find-dep-single
+   #:c-simplify-arg
+   #:c-simplify-type
+
 
    ;; others
    #:indent

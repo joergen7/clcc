@@ -26,6 +26,7 @@
 				(:file "test-clcc-tp"   :depends-on ("clcc-suite"))
 				(:file "test-clcc-ex"   :depends-on ("clcc-suite"))
 				(:file "test-clcc-name" :depends-on ("clcc-suite"))
+				(:file "test-clcc-st"   :depends-on ("clcc-suite"))
 				(:file "test-clcc"      :depends-on ("clcc-suite")))
   :perform     (test-op (o c)
 						(unless

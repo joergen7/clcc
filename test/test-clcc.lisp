@@ -431,15 +431,6 @@
     (is (equal "x << y;" (c-->string s))))
 
   (signals
-      (error "c-s-while failed to signal error on bad body")
-    (c-s-while (c-n-x "x") (c-n-x "y")))
-
-  (let ((s (c-s-while (c-n-x "x") (c-s-block (c-s-do (c-n-x "y"))))))
-    (is (equal "x" (name (cnd s))))
-    (is (equal "y" (name (expr (car (body (body s)))))))
-    (is (equal (format nil "while( x )~%  {~%    y;~%  }") (c-->string s))))
-
-  (signals
       (error "c-s-throw failed to signal error on bad argument")
     (c-s-throw (c-n-x "except") 5))
 
@@ -796,72 +787,6 @@
 	  
   )
 
-(test cc-c-find-dep-single
-
-  (is (null (c-find-dep-single (c-n-x "int"))))
-
-  (is (equal '("vector") (c-find-dep-single (c-t-vector (c-t-bool)))))
-  (is (equal '("ctime" "vector") (c-find-dep-single (c-t-vector (c-t-time)))))
-
-  (is (equal '("utility") (c-find-dep-single (c-t-pair (c-t-bool) (c-t-bool)))))
-  (is (equal '("ctime" "utility") (c-find-dep-single (c-t-pair (c-t-time) (c-t-bool)))))
-  (is (equal '("ctime" "utility") (c-find-dep-single (c-t-pair (c-t-bool) (c-t-time)))))
-
-  (is (equal '("experimental/optional") (c-find-dep-single (c-t-optional (c-t-bool)))))
-  (is (equal '("ctime" "experimental/optional") (c-find-dep-single (c-t-optional (c-t-time)))))
-
-
-  (is (equal '("map") (c-find-dep-single (c-t-map (c-t-bool) (c-t-bool)))))
-  (is (equal '("map" "string") (c-find-dep-single (c-t-map (c-t-string) (c-t-bool)))))
-  (is (equal '("map" "string") (c-find-dep-single (c-t-map (c-t-bool) (c-t-string)))))
-
-  (is (null (c-find-dep-single (c-t-bool))))
-  (is (equal '("string") (c-find-dep-single (c-t-string))))
-  (is (equal '() (c-find-dep-single (c-t-int))))
-  (is (equal '() (c-find-dep-single (c-t-nat))))
-  (is (equal '("ctime") (c-find-dep-single (c-t-time))))
-  (is (null (c-find-dep-single (c-t-struct-tm))))
-  (is (null (c-find-dep-single (c-t-void))))
-  (is (equal '("cstddef") (c-find-dep-single (c-t-size))))
-  (is (null (c-find-dep-single (c-t-char))))
-
-  (is (null (c-find-dep-single (c-t-function '() (c-t-void)))))
-
-  (is (equal '("memory") (c-find-dep-single (c-t-unique-ptr (c-t-bool)))))
-  (is (equal '("ctime" "memory") (c-find-dep-single (c-t-unique-ptr (c-t-time)))))
-  (is (equal '("sstream") (c-find-dep-single (c-n-sub (c-n-x "std") (c-n-x "stringstream")))))
-  (is (equal '("sstream") (c-find-dep-single (c-static-func "f" (list (c-argument "x" (c-n-sub (c-n-x "std") (c-n-x "stringstream")))) (c-t-void)))))
-
-  (is (null (c-find-dep-single (c-e-int 5))))
-  (is (null (c-find-dep-single (c-n-x "x"))))
-  (is (equal '("cstring") (c-find-dep-single (c-n-x "memset"))))
-  (is (equal '("cstring") (c-find-dep-single (c-e-call (c-n-x "memset")))))
-
-
-  (is (null (c-find-dep-single (c-field :public (c-argument "x" (c-t-bool))))))
-  (is (equal '("ctime") (c-find-dep-single (c-field :public (c-argument "x" (c-t-time))))))
-
-  (is (null (c-find-dep-single (c-meth :public nil (c-info "m") '() (c-t-void)))))
-  (is (equal '("ctime") (c-find-dep-single (c-meth :public nil (c-info "m") (list (c-argument "x" (c-t-time))) (c-t-void)))))
-  (is (equal '("ctime") (c-find-dep-single (c-abstract-meth :public nil (c-info "m") (list (c-argument "x" (c-t-time))) (c-t-void)))))
-  
-  (is (null (c-find-dep-single (c-cls (c-info "c") '()))))
-  (is (equal '("ctime")
-	     (c-find-dep-single (c-cls (c-info "c")
-				       '()
-				       (c-field :public (c-argument "x" (c-t-time)))))))
-  
-  (is (equal '("stdexcept" "string") (c-find-dep-single (c-enum (c-info "e")))))
-
-  (is-false (c-find-dep-single (c-func (c-info "f") '() (c-t-void))))
-  (is (equal '("ctime") (c-find-dep-single (c-func (c-info "f") '() (c-t-time)))))
-  (is (equal '("ctime") (c-find-dep-single (c-func (c-info "f") (list (c-argument "x" (c-t-time))) (c-t-void)))))
-  (is (equal '("libxml/parser.h") (c-find-dep-single (c-n-x "xmlSAXHandler"))))
-  (is (equal '("cstring") (c-find-dep-single (c-destructor (c-s-do (c-n-x "memset"))))))
-  (is (equal '("cstring") (c-find-dep-single (c-constructor '() '() (c-s-do (c-n-x "memset"))))))
-  (is (equal '("ctime") (c-find-dep-single (c-constructor (list (c-argument "x" (c-t-time))) '()))))
-  (is (equal '() (c-find-dep-single (c-s-return))))
-  )
 
 (test cc-c-find-dep
 

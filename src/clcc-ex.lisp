@@ -181,6 +181,10 @@
 (defmethod c-->string ((arg c-e-bool))
   (if (value arg) "true" "false"))
 
+(defmethod print-object ((obj c-e-bool) stream)
+  (format stream "(c-e-bool ~a)" (if (value obj) "t" "nil")))
+
+
 ;; c-e-char
 
 (defclass c-e-char (c-ex)

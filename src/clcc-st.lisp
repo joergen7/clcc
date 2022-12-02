@@ -431,7 +431,10 @@
 			(indent (c-->string (apply #'c-s-block body))))))
 
 (defmethod c-find-dep-single ((x c-catch-block))
-  (c-find-dep (body x)))
+  (with-accessors ((except-name except-name)
+				   (body        body))
+	  x
+	(c-find-dep except-name body)))
 
 ;; c-s-try
 
@@ -462,7 +465,10 @@
 			(mapcar #'c-->string catch-block-list))))
 
 (defmethod c-find-dep-single ((x c-s-try))
-  (c-find-dep (catch-block-list x)))
+  (with-accessors ((body             body)
+				   (catch-block-list catch-block-list))
+	  x
+	(c-find-dep body catch-block-list)))
 
 ;; c-s-foreach
 
@@ -632,7 +638,7 @@
 	:initform '()
 	:reader   arg-list)))
 
-(defmethod c-s-<< (expr &rest arg-list)
+(defmethod c-s-<< ((expr c-ex) &rest arg-list)
   (unless (every #'c-ex-p arg-list)
     (error "c-s-<< must have c-ex instances in arg-list"))
   (make-instance 'c-s-<< :expr expr :arg-list arg-list))
@@ -660,7 +666,7 @@
 	:initform '()
 	:reader   arg-list)))
 
-(defmethod c-s->> (expr &rest arg-list)
+(defmethod c-s->> ((expr c-ex) &rest arg-list)
   (unless (every #'c-ex-p arg-list)
     (error "c-s->> must have c-ex instances in arg-list"))
   (make-instance 'c-s->> :expr expr :arg-list arg-list))
@@ -688,16 +694,22 @@
 	:initform '()
 	:reader   body)))
 
-(defmethod c-s-while ((cnd c-ex) (body c-st))
-  (make-instance 'c-s-while
-		 :cnd cnd
-		 :body body))
+(defmethod c-s-while ((cnd c-ex) &rest body)
+  (let ((body (alexandria:flatten body)))
+	(unless (every #'c-st-p body)
+	  (error "c-s-while must have c-st instances in body"))
+	(make-instance 'c-s-while
+				   :cnd cnd
+				   :body body)))
 
-(defmethod c-->string ((arg c-s-while))
-  (format nil
-	  "while( ~a )~%~a"
-	  (c-->string (cnd arg))
-	  (indent (c-->string (body arg)))))
+(defmethod c-->string ((e c-s-while))
+  (with-accessors ((cnd  cnd)
+				   (body body))
+	  e
+	(format nil
+			"while( ~a )~%~a"
+			(c-->string cnd)
+	  (indent (c-->string (c-s-block body))))))
 
 (defmethod c-find-dep-single ((x c-s-while))
   (c-find-dep (cnd x) (body x)))

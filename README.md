@@ -3,7 +3,8 @@
 # clcc
 C++ language model and compiler in Common Lisp
 
-The clcc library provides Common Lisp bindings to generate C++ code.
+This library provides a model of the C++ programming language suitable as a target for compilation. Its goal is to both cover a large portion of C++ language features and be readable.
+
 
 ## System Requirements
 

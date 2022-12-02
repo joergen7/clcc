@@ -29,6 +29,69 @@
   (is (string-equal "{}" (c-->string (c-e-map))))
   (is (string-equal "{}" (c-->string (c-e-list)))))
 
+(test clcc-ex-print
+
+  (is
+   (string-equal
+	"(c-e-string \"blub\")"
+	(format nil "~a" (c-e-string "blub"))))
+
+  (is
+   (string-equal
+	"(c-e-int 5)"
+	(format nil "~a" (c-e-int 5))))
+
+  (is
+   (string-equal
+	"(c-e-!= (c-e-int 4) (c-e-int 3))"
+	(format nil "~a" (c-e-!= (c-e-int 4) (c-e-int 3)))))
+
+  (is
+   (string-equal
+	"(c-e-call (c-n-x \"f\"))"
+	(format nil "~a" (c-e-call (c-n-x "f")))))
+
+  (is
+   (string-equal
+	"(c-e-call (c-n-x \"f\") (c-n-x \"x\"))"
+	(format nil "~a" (c-e-call (c-n-x "f") (c-n-x "x")))))
+
+  (is
+   (string-equal
+	"(c-e-+ (c-n-x \"x\") (c-n-x \"y\"))"
+	(format nil "~a" (c-e-+ (c-n-x "x") (c-n-x "y")))))
+
+  (is
+   (string-equal
+	"(c-e-vector)"
+	(format nil "~a" (c-e-vector))))
+
+  (is
+   (string-equal
+	"(c-e-vector (c-n-x \"a\"))"
+	(format nil "~a" (c-e-vector (c-n-x "a")))))
+
+  (is
+   (string-equal
+	"(c-e-vector (c-n-x \"a\") (c-n-x \"b\"))"
+	(format nil "~a" (c-e-vector (c-n-x "a") (c-n-x "b")))))
+
+  (is
+   (string-equal
+	"(c-e-deref (c-n-x \"p\"))"
+	(format nil "~a" (c-e-deref (c-n-x "p")))))
+
+  (is
+   (string-equal
+	"(c-e-bool t)"
+	(format nil "~a" (c-e-bool t))))
+
+  (is
+   (string-equal
+	"(c-e-bool nil)"
+	(format nil "~a" (c-e-bool nil))))
+  )
+
 (test clcc-ex-construct-format
 
     (let ((e (c-e-++ (c-n-x "x"))))
@@ -66,6 +129,18 @@
   (let ((e (c-e-char #\newline)))
     (is (equal #\newline (value e)))
     (is (equal (format nil "'\\n'") (c-->string e))))
+
+  (let ((e (c-e-char #\return)))
+    (is (equal #\return (value e)))
+    (is (equal (format nil "'\\r'") (c-->string e))))
+
+  (let ((e (c-e-char #\tab)))
+    (is (equal #\tab (value e)))
+    (is (equal (format nil "'\\t'") (c-->string e))))
+
+  (let ((e (c-e-char #\')))
+    (is (equal #\' (value e)))
+    (is (equal (format nil "'\\''") (c-->string e))))
 
   (let ((e (c-e-- (c-e-int 3) (c-e-int 4))))
     (is (equal 3 (value (lhs e))))

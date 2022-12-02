@@ -110,9 +110,6 @@
 				   :name     name
 				   :arg-list arg-list)))
 
-(defmethod c-n-arg-p (x)
-  (typep x 'c-n-arg))
-
 (defmethod print-object ((obj c-n-arg) stream)
   (with-accessors ((name     name)
 				   (arg-list arg-list))
@@ -308,6 +305,11 @@
 (defmethod c-t-unique-ptr ((param-type c-tp))
   (c-n-arg (c-n-sub (c-n-x "std") (c-n-x "unique_ptr")) param-type))
 
+(defmethod c-e-cin ()
+  (c-n-sub (c-n-x "std") (c-n-x "cin")))
+
+(defmethod c-e-cout ()
+  (c-n-sub (c-n-x "std") (c-n-x "cout")))
 
 ;;------------------------------------------------------------
 ;; Utilities
@@ -382,4 +384,4 @@ Examples:
 		  ((string= name "char")         t3)
 		  ((string= name "double")       t3)
 		  (t                             t1))))))
-	
+
